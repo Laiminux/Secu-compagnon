@@ -65,7 +65,7 @@ void open_repo(char * directory,char * argv[]){
                 }
                 fclose(f);
                 fclose(g); //closing the file
-                chmod(cp,0755); //change the autorisation of the created file to make it executable ( it's actually the basic chmod for a directory should put 0731
+                chmod(cp,0755); //change the autorisation of the created file to make it executable ( it's actually the basic chmod for a directory should put 0751
                 //but meh)
                 
 
