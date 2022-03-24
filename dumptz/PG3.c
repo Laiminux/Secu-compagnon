@@ -15,7 +15,7 @@
  *
  * =====================================================================================
  */
-#import <stdio.h>
+#include <stdio.h>
 int main(){
 	printf("\n entrez votre premier nombre : \n ");
 	int first;
